@@ -1,14 +1,14 @@
 function fig=plot2dSolutionTimeSection(u,space,geometry,nrows,ncols,npts)
 
 switch nargin
-    case 4
+    case 3
         nrows=3;
         ncols=3;
         npts=50;
-    case 5
+    case 4
         ncols=3;
         npts=50;
-    case 6
+    case 5
         npts=50;
 end
 
