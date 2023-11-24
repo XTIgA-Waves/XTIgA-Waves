@@ -13,7 +13,7 @@ switch nargin
 end
 
 x={linspace(0,1,npts)};
-t=linspace(0,0.75,nrows*ncols);
+t=linspace(0,1,nrows*ncols);
 [eu, F] = sp_eval (u, space, geometry, [repmat(x,[1,numel(space.knots)-1]),{t}]);
 min_eu=min(eu(:));
 max_eu=max(eu(:));
