@@ -109,7 +109,8 @@ end
 clear mshT spaceT;
 
 %% Assembling Global structures
-solution.geometryST = geo_load(nrbextrude(geometryS.nurbs,[zeros(1,dimS),T]));
+% solution.geometryST = geo_load(nrbextrude(geometryS.nurbs,[zeros(1,dimS),T]));
+solution.geometryST = geo_load_st(geometryS,0,T);
 clear geometryS;
 nquad = [degreeS,degreeT]+1;
 quad_rule = msh_gauss_nodes(nquad);
