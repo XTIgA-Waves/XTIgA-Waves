@@ -65,6 +65,8 @@ switch dimS
         Ks=op_gradu_gradv_tp(spaceS,spaceS,mshS,@(x) c(x,0).^(2));
     case 2
         Ks=op_gradu_gradv_tp(spaceS,spaceS,mshS,@(x,y) c(x,y,0).^(2));
+    case 3
+        Ks=op_gradu_gradv_tp(spaceS,spaceS,mshS,@(x,y,z) c(x,y,z,0).^(2));
 end
 Ms=op_u_v_tp(spaceS,spaceS,mshS);
 
@@ -129,6 +131,8 @@ switch dimS
         [u_drchlt, drchlt_dofs_1] = sp_drchlt_l2_proj (solution.spaceST, solution.mshST, @(x,t,iside)u_ex(x,t), union(drchltSides,2*dimS+1));
     case 2
         [u_drchlt, drchlt_dofs_1] = sp_drchlt_l2_proj (solution.spaceST, solution.mshST, @(x,y,t,iside)u_ex(x,y,t), union(drchltSides,2*dimS+1));
+    case 3
+        [u_drchlt, drchlt_dofs_1] = sp_drchlt_l2_proj (solution.spaceST, solution.mshST, @(x,y,z,t,iside)u_ex(x,y,z,t), union(drchltSides,2*dimS+1));
 
 end
 solution.u(drchlt_dofs_1) = u_drchlt;
@@ -201,6 +205,11 @@ end
 clear msh_side sp_side x dofs;
 
 %% Solve the linear system
+% case 'dir':    direct solver for the linear system
+% case 'dirEff': a faster direct solver based on a triangularization of the
+%                time matrices. In presence of Robin boundary condition,
+%                this solver cannot be used.
+% case 'prec':   GMRES solver preconditioned by dirEff.
 switch Solver
     case 'dir'
         Mat=kron(Mt(1:end-1,2:end),Ks(intDofsS,intDofsS))-kron(Kt(1:end-1,2:end),Ms(intDofsS,intDofsS));
