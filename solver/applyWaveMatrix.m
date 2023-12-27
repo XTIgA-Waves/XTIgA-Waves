@@ -1,7 +1,13 @@
-function Y = applyWaveMatrix(x,Ks,Kt,Ms,Mt)
+function Y = applyWaveMatrix(x,Kt,Wt,Ks,Ms,Mr,Wr)
 
-Y=reshape(x,size(Ms,1),size(Mt,1));
-Y=Ks*Y*Mt'-Ms*Y*Kt';
-Y=Y(:);
+if nargin == 5
+    Y=reshape(x,[size(Ms,1),size(Wt,1)]);
+    Y=Ks*Y*Wt'-Ms*Y*Kt';
+    Y=Y(:);
+else
+    Y=reshape(x,size(Ms,1),size(Wt,1));
+    Y=Ks*Y*Wt'-Ms*Y*Kt'+Mr*Y*Wr';
+    Y=Y(:);
+end
 
 end

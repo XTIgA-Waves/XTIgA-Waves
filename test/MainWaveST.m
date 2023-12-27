@@ -11,7 +11,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Options
-plotSolution=true;
+plotSolution = true;
 
 %% Problem Data
 problemData.c = @(x,y,t) ones(size(x));
@@ -30,15 +30,15 @@ problemData.rbnSides = []; % only for space domain
 problemData.perDir = []; % only for space domain
 
 %% Method data
-methodData.nsubS=[1,1]*16; % a column for each spatial parametric direction
-methodData.nsubT=32;
-methodData.degreeS=[1,1]*2;
-methodData.degreeT=2;
+methodData.nsubS = [1,1]*16; % a column for each spatial parametric direction
+methodData.nsubT = 32;
+methodData.degreeS = [1,1]*2;
+methodData.degreeT = 2;
 methodData.regularityS = (methodData.degreeS-1);
 methodData.regularityT = (methodData.degreeT-1);
-methodData.stab_param=10^(-methodData.degreeT);
-nrows=3;
-ncols=3;
+methodData.stab_param = 10^(-methodData.degreeT);
+nrows = 3;
+ncols = 3;
 
 %% Solving the problem
 [solution] = solveWaveSTstab(problemData,methodData,'Solver','dir','computeError',false,'computeEnergy',false);
