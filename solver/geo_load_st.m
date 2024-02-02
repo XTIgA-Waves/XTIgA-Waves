@@ -5,7 +5,7 @@ map{2} = @(pts) jacobianGeoST(pts,geoS,t0,t1);
 map{3} = @(pts) hessianGeoST(pts,geoS);
 
 geoST = geo_load(map);
-
+geoST.rdim = geoS.rdim + 1;
 end
 
 function val = evalGeoST(pts,geoS,t0,t1)
