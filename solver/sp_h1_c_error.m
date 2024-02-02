@@ -9,13 +9,11 @@ end
 grad_valex  = reshape (feval (graduex, x{:}), sp.ncomp, msh.rdim, msh.nqn, msh.nel);
 
 c_val = reshape(c(x{:}),[1,1, msh.nqn, msh.nel]);
-c_val = repmat(c_val,[1,msh.rdim-1,1,1]);
-c_val = cat(2,c_val,ones(size(c_val)));
 
 w = msh.quad_weights .* msh.jacdet;
 
 [errl2, errl2_elem] = sp_l2_error (sp, msh, u, uex);
-errh1s_elem = sum (reshape (sum (sum (((grad_valu - grad_valex).*c_val).^2, 1), 2), [msh.nqn, msh.nel]) .* w);
+errh1s_elem = sum (reshape (sum (sum ((grad_valu - grad_valex).^2, 1).*c_val, 2), [msh.nqn, msh.nel]) .* w);
 errh1s = sqrt (sum (errh1s_elem));
 
 errh1  = sqrt (errl2^2 + errh1s^2);
