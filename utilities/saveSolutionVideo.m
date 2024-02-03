@@ -39,8 +39,7 @@ for iframe=1:numel(t)
         surf(squeeze(F(1,:,:,1)),squeeze(F(2,:,:,1)),eu(:,:,iframe));
         view(2);
         shading interp;
-        phyPts=geometry.map([0;0;t(iframe)]);
-        sgtitle(sprintf('t = %.4g',phyPts(end)),'FontSize',28);
+        sgtitle(sprintf('t = %.4g',F(end,1,1,it)),'FontSize',28);
         fig.CurrentAxes.CLim=[min_eu,max_eu];
         fig.CurrentAxes.ZLim=[min_eu,max_eu];
         cb = colorbar;

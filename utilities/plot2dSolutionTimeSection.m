@@ -32,8 +32,7 @@ if numel(space.knots)==3
         view(2);
         axis tight;
         axis equal;
-        phyPts=geometry.map([0;0;t(it)]);
-        title('',sprintf('t=%g',phyPts(end)),'FontSize',8);
+        title('',sprintf('t=%g',F(end,1,1,it)),'FontSize',8);
         box on;
     end
     cb = colorbar;

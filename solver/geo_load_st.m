@@ -13,7 +13,7 @@ if iscell(pts)
     t = reshape(t0+(t1-t0)*pts{end},1,[]);
     phyPts = geoS.map(pts(1:end-1));
     phyPts = repmat(phyPts,[1,numel(t)]);
-    t = repmat(t,[1,prod(cellfun(@numel,pts(1:end-1)))]);
+    t = reshape(repmat(t,[prod(cellfun(@numel,pts(1:end-1))),1]),1,[]);
     val = cat(1,phyPts,t);
 else
     phyPts = geoS.map(pts(1:end-1,:));
