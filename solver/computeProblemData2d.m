@@ -41,7 +41,9 @@ problemData.hess_u_ex = @(x,y,t) cat (1, ...
     reshape (dxy_u_ex(x,y,t), [1, size(x)]), ...
     reshape (dyy_u_ex(x,y,t), [1, size(x)]));
 
-sym_f=-sym_c^2*(sym_dxx_u_ex+sym_dyy_u_ex)+diff(diff(sym_u_ex,t),t);
+sym_dx_c=diff(sym_c,x);
+sym_dy_c=diff(sym_c,y);
+sym_f=-sym_c^2*(sym_dxx_u_ex+sym_dyy_u_ex)+diff(diff(sym_u_ex,t),t)-2*sym_c*(sym_dx_c*sym_dx_u_ex+sym_dy_c*sym_dy_u_ex);
 f=matlabFunction(sym_f,'Vars',[x,y,t]);
 problemData.f=@(x,y,t) f(x,y,t)+0*x+0*t+0*y;
 

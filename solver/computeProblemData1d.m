@@ -27,7 +27,8 @@ dxx_u_ex=@(x,t) dxx_u_ex(x,y,t)+0*x+0*t;
 % We compute the Hessian only for the space variable
 problemData.hess_u_ex = dxx_u_ex;
 
-sym_f=-sym_c^2*(sym_dxx_u_ex)+diff(diff(sym_u_ex,t),t);
+sym_dx_c=diff(sym_c,x);
+sym_f=-sym_c^2*sym_dxx_u_ex+diff(diff(sym_u_ex,t),t)-2*sym_c*sym_dx_c*sym_dx_u_ex;
 f=matlabFunction(sym_f,'Vars',[x,t]);
 problemData.f=@(x,t) f(x,t)+0*x+0*t;
 
