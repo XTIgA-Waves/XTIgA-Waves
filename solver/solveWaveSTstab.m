@@ -75,7 +75,7 @@ end
 Ms = op_u_v_tp(spaceS,spaceS,mshS);
 
 %% Assembling Time matrices
-Mt = op_u_v_tp(spaceT,spaceT,mshT);
+Wt = op_u_v_tp(spaceT,spaceT,mshT);
 Kt = op_gradu_gradv_tp(spaceT,spaceT,mshT);
 
 if~isempty(rbnSides)
@@ -108,8 +108,8 @@ if ~isempty(stab_param)
         clear sizeReshapeT;
         Pt = op_mat_hostab_tp(spaceT, spaceT, mshT, shapeFunctionsDerT,shapeFunctionsDerT,degreeT);
         clear shapeFunctionsDerT;
-        Wt = Mt - stab_param*solution.ht^(2*degreeT)*Pt;
-        clear Pt stab_param Mt;
+        Wt = Wt - stab_param*solution.ht^(2*degreeT)*Pt;
+        clear Pt stab_param;
     end
 end
 clear mshT spaceT;
@@ -225,7 +225,7 @@ switch Solver
         solution.u(intDofs1) = Mat\rhs(intDofs2);
     case 'dirEff'
         [U,Ds,Q,Z,Tr,A] = FTparameters(Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Wt(1:end-1,2:end));
-        clear Ks Kt Ms Mt intDofsS;
+        clear Ks Kt Ms Wt intDofsS;
         solution.u(intDofs1) = FTapplication(rhs(intDofs2),U,Ds,Q,Z,Tr,A);
         clear U Ds Q Z Tr A;
     case 'precT'
@@ -242,7 +242,7 @@ switch Solver
         [y,~,relres,iter] = gmres(Mat,rhs(intDofs2),50,tol,numel(intDofs1),Prec);
         solution.u(intDofs1) = y;
         fprintf(1,'\n*Solver info: iter=[%d,%d]; Relres=%g*\n',iter(1),iter(2),relres);
-        clear intDofs2 U Ds Q Z Tr A Ks Kt Ms Mt Wt Mr Wr intDofsS iter relres;
+        clear intDofs2 U Ds Q Z Tr A Ks Kt Ms Wt Mr Wr intDofsS iter relres;
 end
 solution.nDof = numel(intDofs1);
 clear intDofs1 intDofs2 rhs;
