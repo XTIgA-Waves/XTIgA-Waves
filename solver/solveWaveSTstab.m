@@ -259,26 +259,23 @@ end
 
 %% Compute Energy at t=0 and t=T
 if computeEnergy
-    dofs = solution.spaceST.boundary(end-1).dofs;
-    mshSide = msh_eval_boundary_side (solution.mshST,numel(solution.spaceST.boundary)-1);
-    spSide = sp_precompute (solution.spaceST.boundary(end-1), mshSide,'value',true,'gradient',true);
-    for idim = 1:solution.mshST.rdim
-        x{idim} = reshape (mshSide.geo_map(idim,:,:),mshSide.nqn,mshSide.nel);
+    pts = [cellfun(@(qn)qn(:),solution.mshST.qn(1:end-1),'UniformOutput',false),linspace(0,1,2)];
+    weightsS = cellfun(@(qw)qw(:),solution.mshST.qw(1:end-1),'UniformOutput',false);
+    wS = 1;
+    for idim = dimS:-1:1
+        wS = kron(wS,weightsS{idim});
     end
-    Ecoefs = @(x,y,t) cat (1,repmat(eye(solution.mshST.rdim-1,solution.mshST.rdim),[1,1,size(x)]),cat(2,repmat(zeros(1,solution.mshST.rdim-1),[1,1,size(x)]),reshape(1./c(x,y,t).^2,[1,1,size(x)])));
-    Emat = op_energy(spSide,mshSide,Ecoefs(x{:}));
-    solution.Einit = solution.u(dofs)'*Emat*solution.u(dofs);
-
-    dofs = solution.spaceST.boundary(end).dofs;
-    mshSide = msh_eval_boundary_side (solution.mshST,numel(solution.spaceST.boundary));
-    spSide = sp_precompute (solution.spaceST.boundary(end), mshSide,'value',true,'gradient',true);
-    for idim = 1:solution.mshST.rdim
-        x{idim} = reshape (mshSide.geo_map(idim,:,:),mshSide.nqn,mshSide.nel);
+    grad_u_eval = sp_eval(solution.u,solution.spaceST,solution.geometryST,pts,{'gradient'});
+    grad_u_eval = reshape(grad_u_eval,[],2);
+    c_eval = c(pts{:});
+    c_eval = reshape(c_eval,[],2);
+    for it = 1:nTime
+        Jac = solution.mshST.map_der({solution.mshST.qn{1}(:),0});
+        JacS = squeeze(Jac(1,1,:));
+        grad_x_l2_2 = sum(reshape(grad_u_eval(1,:,it),[],1).^2.*c_eval(:,it).^2.*wS.*abs(JacS))/2;
+        grad_t_l2_2 = sum(reshape(grad_u_eval(2,:,it),[],1).^2.*wS.*abs(JacS))/2;
+        solution.E0Et(it) = grad_x_l2_2 + grad_t_l2_2;
     end
-    Emat = op_energy(spSide,mshSide,Ecoefs(x{:}));
-    clear mshSide spSide x;
-    solution.Efinal = solution.u(dofs)'*Emat*solution.u(dofs);
-    clear dofs;
 end
 end
 
