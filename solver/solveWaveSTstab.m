@@ -11,8 +11,8 @@ p = inputParser;
 errorMsg = 'In presence of Robin boundary condition, the ''efficient'' version of the linear solver is not exact.';
 validationFcn = @(x) assert((isempty(rbnSides)||~strcmp(x,'dirEff')),errorMsg);
 addParameter(p,'Solver','dir',validationFcn);
-addParameter(p,'computeError',false,@islogical);
-addParameter(p,'computeEnergy',false,@islogical);
+addParameter(p,'Error',false,@islogical);
+addParameter(p,'Energy',false,@islogical);
 p.parse(varargin{:});
 cellfun(@(x) assignin('caller',x,p.Results.(x)), fieldnames(p.Results));
 clear p varargin;
@@ -75,11 +75,11 @@ end
 Ms = op_u_v_tp(spaceS,spaceS,mshS);
 
 %% Assembling Time matrices
-Wt = op_u_v_tp(spaceT,spaceT,mshT);
+Mt = op_u_v_tp(spaceT,spaceT,mshT);
 Kt = op_gradu_gradv_tp(spaceT,spaceT,mshT);
 
 if~isempty(rbnSides)
-    Wr = op_vel_dot_gradu_v_tp(spaceT,spaceT,mshT,@(t) ones(size(t)));
+    Mt = op_vel_dot_gradu_v_tp(spaceT,spaceT,mshT,@(t) ones(size(t)));
     nnzMr = sum(arrayfun(@(ibnd) numel(spaceS.boundary(ibnd).dofs),rbnSides))*(2*max(degreeS)+1);
     Mr = spalloc(size(Ms,1),size(Ms,2),nnzMr);
     for iside = rbnSides
@@ -106,10 +106,8 @@ if ~isempty(stab_param)
         sizeReshapeT = sizeReshapeT(2:end);
         shapeFunctionsDerT = reshape(shapeFunctionsDerT(degreeT+1,:,:,:),sizeReshapeT);
         clear sizeReshapeT;
-        Pt = op_mat_hostab_tp(spaceT, spaceT, mshT, shapeFunctionsDerT,shapeFunctionsDerT,degreeT);
-        clear shapeFunctionsDerT;
-        Wt = Wt - stab_param*solution.ht^(2*degreeT)*Pt;
-        clear Pt stab_param;
+        Pt = stab_param*solution.ht^(2*degreeT)*op_mat_hostab_tp(spaceT, spaceT, mshT, shapeFunctionsDerT,shapeFunctionsDerT,degreeT);
+        clear shapeFunctionsDerT stab_param;
     end
 end
 clear mshT spaceT;
@@ -138,26 +136,20 @@ switch dimS
     case 3
         gDrchlt = @(x,y,z,t,iside) InitDrchlt3d(gDrchlt,gInit,x,y,z,t,dimS,iside);
 end
-[uDrchlt, drchltDofs1] = sp_drchlt_l2_proj (solution.spaceST, solution.mshST, gDrchlt, union(drchltSides,numel(solution.spaceST.boundary)-1));
-solution.u(drchltDofs1) = uDrchlt;
-clear uDrchlt;
+[uForced, trialForcedDofs] = sp_drchlt_l2_proj (solution.spaceST, solution.mshST, gDrchlt, union(drchltSides,numel(solution.spaceST.boundary)-1));
+solution.u(trialForcedDofs) = uForced;
+clear uForced;
 
-drchltDofs2 = [];
+testforcedDofs = [];
 nent = 0;
 for iside = union(drchltSides,numel(solution.spaceST.boundary))
     nent = nent + solution.mshST.boundary(iside).nel * solution.spaceST.boundary(iside).nsh_max^2;
-    drchltDofs2 = union (drchltDofs2, solution.spaceST.boundary(iside).dofs);
+    testforcedDofs = union (testforcedDofs, solution.spaceST.boundary(iside).dofs);
 end
-clear nent;
 
-intDofs1 = setdiff (1:solution.spaceST.ndof, drchltDofs1);
-clear drchltDofs1;
-intDofs2 = setdiff (1:solution.spaceST.ndof, drchltDofs2);
-clear drchltDofs2;
-tmp = Ks*solution.u(solution.spaceST.boundary(end-1).dofs)*(Wt(:,1))'-Ms*solution.u(solution.spaceST.boundary(end-1).dofs)*(Kt(:,1))';
-tmp=tmp(:);
-rhs(intDofs2) = rhs(intDofs2)-tmp(intDofs2);
-clear tmp;
+trialIntDofs = setdiff (1:solution.spaceST.ndof, trialForcedDofs);
+testForcedDofs = setdiff (1:solution.spaceST.ndof, testforcedDofs);
+
 drchltDofsST = [];
 drchltDofsS = [];
 for iside = drchltSides
@@ -167,12 +159,23 @@ end
 drchltDofsST = setdiff(drchltDofsST,solution.spaceST.boundary(end-1).dofs);
 intDofsS = setdiff(1:spaceS.ndof,drchltDofsS);
 solution.nDofS = numel(intDofsS);
-clear spaceS;
-tmp = Ks(:,drchltDofsS)*reshape(solution.u(drchltDofsST),numel(drchltDofsS),size(Kt,2)-1)*Wt(:,2:end)'-Ms(:,drchltDofsS)*reshape(solution.u(drchltDofsST),numel(drchltDofsS),size(Kt,2)-1)*Kt(:,2:end)';
-clear drchltDofsS;
-tmp = tmp(:);
-rhs(intDofs2) = rhs(intDofs2)-tmp(intDofs2);
-clear tmp drchltDofsST;
+clear nent spaceS;
+
+tmp0 = Ms*solution.u(solution.spaceST.boundary(end-1).dofs)*Kt(:,1)'...
+      -Ks*solution.u(solution.spaceST.boundary(end-1).dofs)*Mt(:,1)'...
+      +Ks*solution.u(solution.spaceST.boundary(end-1).dofs)*Pt(:,1)';
+
+tmpDrchlt = Ms(:,drchltDofsS)*reshape(solution.u(drchltDofsST),numel(drchltDofsS),size(Kt,2)-1)*Kt(:,2:end)'...
+           -Ks(:,drchltDofsS)*reshape(solution.u(drchltDofsST),numel(drchltDofsS),size(Kt,2)-1)*Mt(:,2:end)'...
+           +Ks(:,drchltDofsS)*reshape(solution.u(drchltDofsST),numel(drchltDofsS),size(Kt,2)-1)*Pt(:,2:end)';
+
+if ~isempty(rbnSides)
+    tmp0 = tmp0 -Mr*solution.u(solution.spaceST.boundary(end-1).dofs)*Mt(:,1)';
+    tmpDrchlt = tmpDrchlt -Mr(:,drchltDofsS)*reshape(solution.u(drchltDofsST),numel(drchltDofsS),size(Kt,2)-1)*Mt(:,2:end)';
+end
+
+rhs(testForcedDofs) = rhs(testForcedDofs) + tmp0(testForcedDofs(:)) + tmpDrchlt(testForcedDofs(:));
+clear trialForcedDofs testforcedDofs tmp0 tmpDrchlt;
 
 %% Apply Initial conditions (u'(0)=u_1)
 dofs = solution.spaceST.boundary(2*dimS+1).dofs;
@@ -183,7 +186,7 @@ x = cell(solution.mshST.rdim,1);
 for idim = 1:solution.mshST.rdim
     x{idim} = reshape (mshSide.geo_map(idim,:,:),mshSide.nqn,mshSide.nel);
 end
-rhs(dofs) = rhs(dofs) + op_f_v (spSide,mshSide,gInitDer(x{:}));
+rhs(dofs) = rhs(dofs) + op_f_v(spSide,mshSide,gInitDer(x{:}));
 clear spSide dofs;
 
 %% Apply Neumann boundary conditions
@@ -191,10 +194,11 @@ for iside = nmnnSides
     dofs = solution.spaceST.boundary(iside).dofs;
     mshSide = msh_eval_boundary_side (solution.mshST,iside);
     spSide = sp_eval_boundary_side (solution.spaceST,mshSide);
+    x = cell(solution.mshST.rdim,1);
     for idim = 1:solution.mshST.rdim
         x{idim} = reshape (mshSide.geo_map(idim,:,:),mshSide.nqn,mshSide.nel);
     end
-    rhs(dofs) = rhs(dofs) + op_f_v (spSide,mshSide,gNmnn(x{:}));
+    rhs(dofs) = rhs(dofs) + op_f_v(spSide,mshSide,gNmnn(x{:}));
 end
 clear mshSide spSide x dofs;
 
@@ -203,10 +207,11 @@ for iside = rbnSides
     dofs = solution.spaceST.boundary(iside).dofs;
     mshSide = msh_eval_boundary_side (solution.mshST,iside);
     spSide = sp_eval_boundary_side (solution.spaceST,mshSide);
+    x = cell(solution.mshST.rdim,1);
     for idim = 1:solution.mshST.rdim
         x{idim} = reshape (mshSide.geo_map(idim,:,:),mshSide.nqn,mshSide.nel);
     end
-    rhs(dofs) = rhs(dofs) + op_f_v (spSide,mshSide,gRbn(x{:}));
+    rhs(dofs) = rhs(dofs) + op_f_v(spSide,mshSide,gRbn(x{:}));
 end
 clear mshSide spSide x dofs;
 
@@ -218,37 +223,37 @@ clear mshSide spSide x dofs;
 % case 'precT':   GMRES solver preconditioned by dirEff.
 switch Solver
     case 'dir'
-        Mat=kron(Wt(1:end-1,2:end),Ks(intDofsS,intDofsS))-kron(Kt(1:end-1,2:end),Ms(intDofsS,intDofsS));
+        Mat=kron(Mt(1:end-1,2:end)-Pt(1:end-1,2:end),Ks(intDofsS,intDofsS))-kron(Kt(1:end-1,2:end),Ms(intDofsS,intDofsS));
         if~isempty(rbnSides)
             Mat=Mat+kron(Wt(1:end-1,2:end),Mr(intDofsS,intDofsS));
         end
-        solution.u(intDofs1) = Mat\rhs(intDofs2);
+        solution.u(trialIntDofs) = Mat\rhs(intDofs2);
     case 'dirEff'
-        [U,Ds,Q,Z,Tr,A] = FTparameters(Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Wt(1:end-1,2:end));
-        clear Ks Kt Ms Wt intDofsS;
-        solution.u(intDofs1) = FTapplication(rhs(intDofs2),U,Ds,Q,Z,Tr,A);
+        [U,Ds,Q,Z,Tr,A] = FTparameters(Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Mt(1:end-1,2:end)-Pt(1:end-1,2:end));
+        clear Ks Kt Ms Mt intDofsS;
+        solution.u(trialIntDofs) = FTapplication(rhs(intDofs2),U,Ds,Q,Z,Tr,A);
         clear U Ds Q Z Tr A;
     case 'precT'
-        [U,Ds,Q,Z,Tr,A] = FTparameters(Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Wt(1:end-1,2:end));
+        [U,Ds,Q,Z,Tr,A] = FTparameters(Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Mt(1:end-1,2:end)-Pt(1:end-1,2:end));
         Prec=@(x) FTapplication(x,U,Ds,Q,Z,Tr,A);
         if exist('Mr','var')
-            Mat = @(x) applyWaveMatrix(x,Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Wt(1:end-1,2:end),Mr(intDofsS,intDofsS),Wr(1:end-1,2:end));
+            Mat = @(x) applyWaveMatrix(x,Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Mt(1:end-1,2:end)-Pt(1:end-1,2:end),Mr(intDofsS,intDofsS),Wt(1:end-1,2:end));
         else
-            Mat = @(x) applyWaveMatrix(x,Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Wt(1:end-1,2:end));
+            Mat = @(x) applyWaveMatrix(x,Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Mt(1:end-1,2:end)-Pt(1:end-1,2:end));
         end
         if~exist('tol','var')
             tol=10^-12;
         end
         [y,~,relres,iter] = gmres(Mat,rhs(intDofs2),50,tol,numel(intDofs1),Prec);
-        solution.u(intDofs1) = y;
+        solution.u(trialIntDofs) = y;
         fprintf(1,'\n*Solver info: iter=[%d,%d]; Relres=%g*\n',iter(1),iter(2),relres);
-        clear intDofs2 U Ds Q Z Tr A Ks Kt Ms Wt Mr Wr intDofsS iter relres;
+        clear intDofs2 U Ds Q Z Tr A Ks Kt Ms Mt Mr Mt intDofsS iter relres;
 end
 solution.nDof = numel(intDofs1);
 clear intDofs1 intDofs2 rhs;
 
 %% Compute Errors
-if computeError
+if Error
     [errH1,errL2,errH1s] = sp_h1_c_error_tp (solution.spaceST, solution.mshST, solution.u, u_ex, grad_u_ex, c);
     [normH1,normL2,normH1s] = sp_h1_c_error_tp (solution.spaceST, solution.mshST, zeros(size(solution.u)), u_ex, grad_u_ex, c);
     solution.relErrH1 = errH1/normH1;
@@ -257,25 +262,18 @@ if computeError
     clear errH1s errH1 errL2 normH1s normH1 normL2;
 end
 
+if ErrorFine
+    solFine=load(solFine).solution;
+    [errH1, errL2, errH1s] = sp_h1_error_spline_ex (solution.spaceST, solution.mshST, solution.u, solFine.spaceST, solution.geometryST, solFine.u,c);
+    [normH1,normL2,normH1s] = sp_h1_error_spline_ex (solution.spaceST, solution.mshST, solution.u*0, solFine.spaceST, solution.geometryST, solFine.u,c);
+    solution.relErrH1=errH1/normH1;
+    solution.relErrL2=errL2/normL2;
+    solution.relErrH1s=errH1s/normH1s;
+end
+
 %% Compute Energy at t=0 and t=T
-if computeEnergy
-    pts = [cellfun(@(qn)qn(:),solution.mshST.qn(1:end-1),'UniformOutput',false),linspace(0,1,2)];
-    weightsS = cellfun(@(qw)qw(:),solution.mshST.qw(1:end-1),'UniformOutput',false);
-    wS = 1;
-    for idim = dimS:-1:1
-        wS = kron(wS,weightsS{idim});
-    end
-    grad_u_eval = sp_eval(solution.u,solution.spaceST,solution.geometryST,pts,{'gradient'});
-    grad_u_eval = reshape(grad_u_eval,[],2);
-    c_eval = c(pts{:});
-    c_eval = reshape(c_eval,[],2);
-    for it = 1:nTime
-        Jac = solution.mshST.map_der({solution.mshST.qn{1}(:),0});
-        JacS = squeeze(Jac(1,1,:));
-        grad_x_l2_2 = sum(reshape(grad_u_eval(1,:,it),[],1).^2.*c_eval(:,it).^2.*wS.*abs(JacS))/2;
-        grad_t_l2_2 = sum(reshape(grad_u_eval(2,:,it),[],1).^2.*wS.*abs(JacS))/2;
-        solution.E0Et(it) = grad_x_l2_2 + grad_t_l2_2;
-    end
+if Energy
+    solution.E0Et = computeEnergy(solution.mshST.qn,solution.mshST.qw,solution.u,c,solution.spaceST,solution.geometryST,solution.mshST.map_der,[0,1]);
 end
 end
 
