@@ -53,26 +53,26 @@ for ideg=1:numel(degree)
         %
         methodData.regularityS = 0;
         methodData.regularityT = 0;
-        solutionR0=solveWaveSTstabEx(problemData,methodData,'Solver','dir','computeError',true);
+        solutionR0=solveWaveSTstab(problemData,methodData,'Solver','dir','ExactSol',true,'Error',true);
         TabL2R0(isub,ideg)=solutionR0.relErrL2;
         TabH1sR0(isub,ideg)=solutionR0.relErrH1s;
         Tabht(isub,1)=solutionR0.ht;
         %
         methodData.regularityS = max((methodData.degreeS-2),0);
         methodData.regularityT = max((methodData.degreeT-2),0);
-        solutionR2=solveWaveSTstabEx(problemData,methodData,'Solver','dir','computeError',true);
+        solutionR2=solveWaveSTstab(problemData,methodData,'Solver','dir','ExactSol',true,'Error',true);
         TabL2R2(isub,ideg)=solutionR2.relErrL2;
         TabH1sR2(isub,ideg)=solutionR2.relErrH1s;
         %
         methodData.regularityT = (methodData.degreeT-1);
         methodData.regularityS = 0;
-        solutionRsR0=solveWaveSTstabEx(problemData,methodData,'Solver','dir','computeError',true);
+        solutionRsR0=solveWaveSTstab(problemData,methodData,'Solver','dir','ExactSol',true,'Error',true);
         TabL2RsR0(isub,ideg)=solutionRsR0.relErrL2;
         TabH1sRsR0(isub,ideg)=solutionRsR0.relErrH1s;
         %
         methodData.regularityT = (methodData.degreeT-1);
         methodData.regularityS = (methodData.degreeS-1);
-        solutionR=solveWaveSTstabEx(problemData,methodData,'Solver','dir','computeError',true);
+        solutionR=solveWaveSTstab(problemData,methodData,'Solver','dir','ExactSol',true,'Error',true);
         TabL2R(isub,ideg)=solutionR.relErrL2;
         TabH1sR(isub,ideg)=solutionR.relErrH1s;
     end

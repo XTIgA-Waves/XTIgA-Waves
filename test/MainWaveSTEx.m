@@ -38,7 +38,7 @@ nrows = 3;
 ncols = 3;
 
 %% Solving the problem
-[solution] = solveWaveSTstabEx(problemData,methodData,'Solver','dir','computeError',true,'computeEnergy',false);
+[solution] = solveWaveSTstab(problemData,methodData,'Solver','dir','ExactSol',true,'Error',true,'Energy',false);
 
 %% Plot of the solution
 if plotSolution

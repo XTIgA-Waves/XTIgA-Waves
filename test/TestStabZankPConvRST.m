@@ -51,20 +51,20 @@ for ideg=1:numel(degree)
         %
     	methodData.regularityS = 0;
         methodData.regularityT = 0;
-        solutionR0=solveWaveSTstabZankPEx(problemData,methodData,'Solver','dir','computeError',true);
+        solutionR0=solveWaveSTstabZank(problemData,methodData,'Solver','dir','ExactSol',true,'Error',true);
         TabL2R0(isub,ideg)=solutionR0.relErrL2;
         TabH1sR0(isub,ideg)=solutionR0.relErrH1s;
         Tabht(isub,1)=solutionR0.ht;
         %
     	methodData.regularityS = max((methodData.degreeS-1)-1,0);
         methodData.regularityT = max((methodData.degreeT-1)-1,0);
-        solutionR2=solveWaveSTstabZankPEx(problemData,methodData,'Solver','dir','computeError',true);
+        solutionR2=solveWaveSTstabZank(problemData,methodData,'Solver','dir','ExactSol',true,'Error',true);
         TabL2R2(isub,ideg)=solutionR2.relErrL2;
         TabH1sR2(isub,ideg)=solutionR2.relErrH1s;
         %
     	methodData.regularityS = (methodData.degreeS-1);
         methodData.regularityT = (methodData.degreeT-1);
-        solutionR=solveWaveSTstabZankPEx(problemData,methodData,'Solver','dir','computeError',true);
+        solutionR=solveWaveSTstabZank(problemData,methodData,'Solver','dir','ExactSol',true,'Error',true);
         TabL2R(isub,ideg)=solutionR.relErrL2;
         TabH1sR(isub,ideg)=solutionR.relErrH1s;
     end
