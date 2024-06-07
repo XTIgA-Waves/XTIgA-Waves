@@ -36,10 +36,12 @@ problemData.grad_u_ex_c2=@(x,t) cat (1, ...
     reshape (dx_u_ex(x,t).*problemData.c(x,t).^2, [1, size(x)]), ...
     reshape (dt_u_ex(x,t).*problemData.c(x,t).^2, [1, size(x)]));
 
-problemData.dt_u_ex=dt_u_ex;
+% problemData.dt_u_ex=dt_u_ex;
 
 problemData.c_dt_u_ex=@(x,t) dt_u_ex(x,t)*c(x,t);
 
 problemData.theta=theta;
+
+problemData.gInitDer = dt_u_ex;
 
 end
