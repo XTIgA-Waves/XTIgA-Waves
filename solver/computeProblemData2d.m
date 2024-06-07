@@ -50,12 +50,14 @@ problemData.f=@(x,y,t) f(x,y,t)+0*x+0*t+0*y;
 problemData.grad_u_ex_c2=@(x,y,t) cat (1, ...
     reshape (dx_u_ex(x,y,t).*problemData.c(x,y,t).^2, [1, size(x)]), ...
     reshape (dy_u_ex(x,y,t).*problemData.c(x,y,t).^2, [1, size(x)]),...
-    reshape (-dt_u_ex(x,y,t), [1, size(x)]));
+    reshape (dt_u_ex(x,y,t).*problemData.c(x,y,t).^2, [1, size(x)]));
 
 problemData.dt_u_ex=dt_u_ex;
 
 problemData.c_dt_u_ex=@(x,y,t) dt_u_ex(x,y,t)*c(x,y,t);
 
 problemData.theta=theta;
+
+problemData.gInitDer = dt_u_ex;
 
 end
