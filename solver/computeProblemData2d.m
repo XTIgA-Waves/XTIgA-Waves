@@ -60,4 +60,19 @@ problemData.theta=theta;
 
 problemData.gInitDer = dt_u_ex;
 
+sym_dx_dt_u_ex=diff(sym_dt_u_ex,x);
+dx_dt_u_ex=matlabFunction(sym_dx_dt_u_ex,'Vars',[x,y,t]);
+dx_u_ex=@(x,y,t) dx_dt_u_ex(x,y,t)+0*x+0*y+0*t;
+sym_dy_dt_u_ex=diff(sym_dt_u_ex,y);
+dy_dt_u_ex=matlabFunction(sym_dy_dt_u_ex,'Vars',[x,y,t]);
+dy_dt_u_ex=@(x,y,t) dy_dt_u_ex(x,y,t)+0*x+0*y+0*t;
+sym_dt_dt_u_ex=diff(sym_dt_u_ex,t);
+dt_dt_u_ex=matlabFunction(sym_dt_dt_u_ex,'Vars',[x,y,t]);
+dt_dt_u_ex=@(x,y,t) dt_dt_u_ex(x,y,t)+0*x+0*y+0*t;
+
+problemData.grad_dt_u_ex=@(x,y,t) cat (1, ...
+    reshape (dx_dt_u_ex(x,y,t), [1, size(x)]), ...
+    reshape (dy_dt_u_ex(x,y,t), [1, size(x)]),...
+    reshape (dt_dt_u_ex(x,y,t), [1, size(x)]));
+
 end

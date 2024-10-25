@@ -1,4 +1,4 @@
-function y = blocBackwardSub(x,Tr,Ds)
+function y = blockBackwardSub(x,Tr,Ds)
 
 nt = size(Tr,1);
 ns = length(Ds);

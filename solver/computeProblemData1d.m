@@ -44,4 +44,14 @@ problemData.theta=theta;
 
 problemData.gInitDer = dt_u_ex;
 
+sym_dx_dt_u_ex=diff(sym_dt_u_ex,x);
+dx_dt_u_ex=matlabFunction(sym_dx_dt_u_ex,'Vars',[x,t]);
+dx_dt_u_ex=@(x,t) dx_dt_u_ex(x,t)+0*x+0*t;
+sym_dt_dt_u_ex=diff(sym_dt_u_ex,t);
+dt_dt_u_ex=matlabFunction(sym_dt_dt_u_ex,'Vars',[x,t]);
+dt_dt_u_ex=@(x,t) dt_dt_u_ex(x,t)+0*x+0*t;
+problemData.grad_dt_u_ex=@(x,t) cat (1, ...
+    reshape (dx_dt_u_ex(x,t), [1, size(x)]), ...
+    reshape (dt_dt_u_ex(x,t), [1, size(x)]));
+
 end
