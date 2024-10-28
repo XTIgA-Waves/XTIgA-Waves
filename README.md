@@ -55,7 +55,7 @@ An unconditionally stable space-time isogeometric method for the acoustic wave e
 arXiv preprint arXiv:2303.07268
 ```
 ```
-Ferrari, M. Fraschini, S., Loli, G., Perugia, I. (2024).
+Ferrari, M., Fraschini, S., Loli, G., Perugia, I. (2024).
 Unconditionally stable space-time isogeometric discretization for the wave equation in Hamiltonian formulation
 arXiv preprint arXiv:2303.07268
 ```
