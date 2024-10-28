@@ -4,7 +4,7 @@
 This repository contains the experimental source code to reproduce the stabilized space-time isogeometric method for the acoustic wave equation of
 [An unconditionally stable space–time isogeometric method for the acoustic wave equation](https://arxiv.org/abs/2303.07268),
 and the unconditionally stable space-time isogometric method of 
-[Unconditionally stable space-time isogeometric discretization for the wave equation in Hamiltonian formulation](https://arxiv.org/abs/2303.07268),
+[Unconditionally stable space-time isogeometric discretization for the wave equation in Hamiltonian formulation](https://arxiv.org/abs/2303.07268).
 
 ## Installing the package
 ```bash
@@ -34,11 +34,16 @@ git clone --recursive https://github.com/XTIgA-Waves/XTIgA-Waves
      This will compile the files and save the nurbs package to your MATLAB path.
 
 ## News
-🚀 Nov, 2023: First release of `XTIgA-Waves`. 
+Nov, 2024: added code related to the numerical tests and verifications of [Unconditionally stable space-time isogeometric discretization for the wave equation in Hamiltonian formulation](https://arxiv.org/abs/2303.07268).
+Nov, 2023: First release of `XTIgA-Waves`. 
 
 ## Papers using the code
 * *An unconditionally stable space–time isogeometric method for the acoustic wave equation*  
 Sara Fraschini, Gabriele Loli, Andrea Moiola, Giancarlo Sangalli  
+[![arXiv](https://img.shields.io/badge/arXiv-2303.07268-b31b1b.svg)](https://arxiv.org/abs/2303.07268)
+
+* *Unconditionally stable space-time isogeometric discretization for the wave equation in Hamiltonian formulation*  
+Matteo Ferrari, Sara Fraschini, Gabriele Loli, Ilaria Perugia
 [![arXiv](https://img.shields.io/badge/arXiv-2303.07268-b31b1b.svg)](https://arxiv.org/abs/2303.07268)
 
 
@@ -46,5 +51,10 @@ If you are using `XTIgA-Waves` in your academic work, please consider citing
 ```
 Fraschini, S., Loli, G., Moiola, A., & Sangalli, G. (2023).
 An unconditionally stable space-time isogeometric method for the acoustic wave equation.
+arXiv preprint arXiv:2303.07268
+```
+```
+Ferrari, M. Fraschini, S., Loli, G., Perugia, I. (2024).
+Unconditionally stable space-time isogeometric discretization for the wave equation in Hamiltonian formulation
 arXiv preprint arXiv:2303.07268
 ```
