@@ -2,7 +2,9 @@
 **Add-On to GeoPDEs for Stable Space-Time Isogeometric Wave Equation**
 
 This repository contains the experimental source code to reproduce the stabilized space-time isogeometric method for the acoustic wave equation of
-[An unconditionally stable space–time isogeometric method for the acoustic wave equation](https://arxiv.org/abs/2303.07268).
+[An unconditionally stable space–time isogeometric method for the acoustic wave equation](https://arxiv.org/abs/2303.07268),
+and the unconditionally stable space-time isogometric method of 
+[Unconditionally stable space-time isogeometric discretization for the wave equation in Hamiltonian formulation](https://arxiv.org/abs/2303.07268),
 
 ## Installing the package
 ```bash
