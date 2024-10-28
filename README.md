@@ -59,3 +59,8 @@ Ferrari, M. Fraschini, S., Loli, G., Perugia, I. (2024).
 Unconditionally stable space-time isogeometric discretization for the wave equation in Hamiltonian formulation
 arXiv preprint arXiv:2303.07268
 ```
+
+# Contributions 
+## Lead Developers - **Sara Fraschini** and **Gabriele Loli** Core development and code management 
+## Developers  - **Matteo Ferrari** Development of the folder `verifications`
+## Idea Contributors - **Andrea Moiola, Ilaria Perugia** and **Giancarlo Sangalli**
