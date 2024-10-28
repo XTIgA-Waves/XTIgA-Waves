@@ -35,7 +35,8 @@ git clone --recursive https://github.com/XTIgA-Waves/XTIgA-Waves
 
 ## News
 Nov, 2024: added code related to the numerical tests and verifications of [Unconditionally stable space-time isogeometric discretization for the wave equation in Hamiltonian formulation](https://arxiv.org/abs/2303.07268).
-*Nov, 2023: First release of `XTIgA-Waves`. 
+
+Nov, 2023: First release of `XTIgA-Waves`. 
 
 ## Papers using the code
 * *An unconditionally stable space–time isogeometric method for the acoustic wave equation*  
