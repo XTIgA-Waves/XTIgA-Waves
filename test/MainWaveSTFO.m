@@ -14,22 +14,26 @@
 plotSolution = true;
 
 %% Problem Data
-syms x t;
-sym_c = 1;
-theta = 1;
-sym_u_ex = sin(pi*x)*sin(5/4*pi*t)^2;
-problemData = computeProblemData1d(sym_u_ex,sym_c,theta);
-problemData.geometryS = geo_load(nrbline([0,0],[1,0]));
+problemData.c = @(x,y,t) ones(size(x));
+problemData.theta = 1;
+problemData.f = @(x,y,t) zeros(size(x));
+problemData.gInit = @(x,y) exp(-100*((x-0.5).^2+(y-0.5).^2));
+problemData.gInitDer = @(x,y,t) zeros(size(x));
+problemData.gDrchlt = @(x,y,t) zeros(size(x));
+problemData.gDrchltDer = @(x,y,t) zeros(size(x));
+problemData.gNmnn = @(x,y,t) zeros(size(x));
+problemData.gRbn = @(x,y,t) zeros(size(x));
+problemData.geoName = 'Square.txt';
 problemData.T = 2;
-problemData.drchltSides = [1,2]; % only for space domain
-problemData.nmnnSides = []; % only for space domain
+problemData.drchltSides = []; % only for space domain
+problemData.nmnnSides = [1:4]; % only for space domain
 problemData.rbnSides = []; % only for space domain
 problemData.perDir = []; % only for space domain
 
 %% Method data
-methodData.nsubS = [1]*16; % a column for each spatial parametric direction
+methodData.nsubS = [1,1]*16; % a column for each spatial parametric direction
 methodData.nsubT = 32;
-methodData.degreeS = [1]*2;
+methodData.degreeS = [1,1]*2;
 methodData.degreeT = 2;
 methodData.regularityS = (methodData.degreeS-1);
 methodData.regularityT = (methodData.degreeT-1);
@@ -38,7 +42,7 @@ nrows = 3;
 ncols = 3;
 
 %% Solving the problem
-[solution] = solveWaveSTFO(problemData,methodData,'Solver','dir','ExactSol',true,'Error',true,'Energy',false);
+[solution] = solveWaveSTFO(problemData,methodData,'Solver','dir','Error',false,'Energy',false);
 
 %% Plot of the solution
 if plotSolution
