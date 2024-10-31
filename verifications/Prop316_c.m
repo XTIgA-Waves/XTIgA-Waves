@@ -21,7 +21,7 @@ close all
 
 % B_h^p and C_h^p have been previously computed with 1000 digits precision
 
-%this numbers have been computed with the code Prop316_b.m
+%these numbers have been computed with the code Prop316_b.m
 N1 = [0 20 31 39 47 55 61 68 73 79 83 87 91  94  97  99  101];
 N2 = [0 23 34 44 53 61 69 76 82 88 93 98 102 106 110 112 115];
 
