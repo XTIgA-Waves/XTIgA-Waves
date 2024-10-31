@@ -22,7 +22,7 @@ digits(1000)
 % B_h^p and C_h^p have been previously computed with 1000 digits precision
 
 
-for p = 19:19 
+for p = 17:17 
     Nt = 2^7;
 
     cd ./C_matrices
