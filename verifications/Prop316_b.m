@@ -21,8 +21,8 @@ close all
 
 eps = 10^(-13);
 
-p_min = 15;
-p_max = 18;
+p_min = 2;
+p_max = 17;
 
 N1 = zeros(p_max-p_min+1,1);
 N2 = zeros(p_max-p_min+1,1);
