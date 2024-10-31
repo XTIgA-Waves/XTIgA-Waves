@@ -9,7 +9,7 @@ format long
 % by M. Ferrari, S. Fraschini, G. Loli and I. Perugia
 
 
-% In this code we verify (for p = 2,...,19) the invertibility of the
+% In this code we verify (for p = 2,...,25) the invertibility of the
 % matrices in the family $\{C_n^p\}_n$ with C_h^p=C_n^p defined in 
 % Equation (7). The invertibility is verified as in Theorem 3.4 ii)
 % by checking the invertibility of an associated matrices with size
