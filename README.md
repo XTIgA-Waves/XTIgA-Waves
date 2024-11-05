@@ -41,23 +41,25 @@ Nov, 2023: First release of `XTIgA-Waves`.
 ## Papers using the code
 * *An unconditionally stable space–time isogeometric method for the acoustic wave equation*  
 Sara Fraschini, Gabriele Loli, Andrea Moiola, Giancarlo Sangalli  
-[![arXiv](https://img.shields.io/badge/arXiv-2303.07268-b31b1b.svg)](https://arxiv.org/abs/2303.07268)
+[<img class="publication-brand-image" src="https://sdfestaticassets-eu-west-1.sciencedirectassets.com/prod/4b190b964b2415d63e7a2050ee5b17f5f8cbb4eb/image/elsevier-non-solus.png" alt="Elsevier" width="50">](https://www.sciencedirect.com/science/article/pii/S0898122124002773)
+
 
 * *Unconditionally stable space-time isogeometric discretization for the wave equation in Hamiltonian formulation*  
-Matteo Ferrari, Sara Fraschini, Gabriele Loli, Ilaria Perugia
-[![arXiv](https://img.shields.io/badge/arXiv-2303.07268-b31b1b.svg)](https://arxiv.org/abs/2303.07268)
+Matteo Ferrari, Sara Fraschini, Gabriele Loli, Ilaria Perugia  
+[![arXiv](https://img.shields.io/badge/arXiv-2411.00650-b31b1b.svg)](https://arxiv.org/abs/2411.00650)
 
 
 If you are using `XTIgA-Waves` in your academic work, please consider citing 
 ```
-Fraschini, S., Loli, G., Moiola, A., & Sangalli, G. (2023).
+Fraschini, S., Loli, G., Moiola, A., & Sangalli, G. (2024).
 An unconditionally stable space-time isogeometric method for the acoustic wave equation.
-arXiv preprint arXiv:2303.07268
+Computers & Mathematics with Applications, Volume 169, 2024, Pages 205-222, ISSN 0898-1221.
+https://doi.org/10.1016/j.camwa.2024.06.009.
 ```
 ```
 Ferrari, M., Fraschini, S., Loli, G., Perugia, I. (2024).
 Unconditionally stable space-time isogeometric discretization for the wave equation in Hamiltonian formulation
-arXiv preprint arXiv:2303.07268
+arXiv preprint arXiv:2411.00650
 ```
 
 # Contributions 
