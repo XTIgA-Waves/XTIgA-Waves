@@ -240,13 +240,13 @@ switch Solver
         end
         solution.u(trialIntDofs) = Mat\rhs(testIntDofs);
     case 'dirEff'
-        [U,Ds,Q,Z,Tr,A] = FTparameters(Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Mt(1:end-1,2:end)-Pt(1:end-1,2:end));
+        [U,Ds,Q,Z,Tr,A] = fdtParam(Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Mt(1:end-1,2:end)-Pt(1:end-1,2:end));
         clear Ks Kt Ms Mt intDofsS;
-        solution.u(trialIntDofs) = FTapplication(rhs(testIntDofs),U,Ds,Q,Z,Tr,A);
+        solution.u(trialIntDofs) = fdtApply(rhs(testIntDofs),U,Ds,Q,Z,Tr,A);
         clear U Ds Q Z Tr A;
     case 'precT'
-        [U,Ds,Q,Z,Tr,A] = FTparameters(Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Mt(1:end-1,2:end)-Pt(1:end-1,2:end));
-        Prec=@(x) FTapplication(x,U,Ds,Q,Z,Tr,A);
+        [U,Ds,Q,Z,Tr,A] = fdtParam(Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Mt(1:end-1,2:end)-Pt(1:end-1,2:end));
+        Prec=@(x) fdtApply(x,U,Ds,Q,Z,Tr,A);
         if exist('Mr','var')
             Mat = @(x) applyWaveMatrix(x,Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Mt(1:end-1,2:end)-Pt(1:end-1,2:end),Mr(intDofsS,intDofsS),Wt(1:end-1,2:end));
         else
@@ -258,6 +258,26 @@ switch Solver
         [y,~,relres,iter] = gmres(Mat,rhs(testIntDofs),50,tol,numel(trialIntDofs),Prec);
         solution.u(trialIntDofs) = y;
         fprintf(1,'\n*Solver info: iter=[%d,%d]; Relres=%g*\n',iter(1),iter(2),relres);
+        clear testIntDofs U Ds Q Z Tr A Ks Kt Ms Mt Mr Wt intDofsS iter relres;
+    case 'precFT'
+        sTimeSetup = tic;
+        [Q,Z,Tr,A] = ftParam(Kt(1:end-1,2:end),Mt(1:end-1,2:end)-Pt(1:end-1,2:end));
+        solution.timeSetup = toc(sTimeSetup);
+        Prec=@(x) ftApply(x,Q,Z,Tr,A,Ks(intDofsS,intDofsS),Ms(intDofsS,intDofsS));
+        if exist('Mr','var')
+            Mat = @(x) applyWaveMatrix(x,Kt(1:end-1,2:end),Mt(1:end-1,2:end)-Pt(1:end-1,2:end),Ks(intDofsS,intDofsS),Ms(intDofsS,intDofsS),Mr(intDofsS,intDofsS),Wt(1:end-1,2:end));
+        else
+            Mat = @(x) applyWaveMatrix(x,Kt(1:end-1,2:end),Mt(1:end-1,2:end)-Pt(1:end-1,2:end),Ks(intDofsS,intDofsS),Ms(intDofsS,intDofsS));
+        end
+        if~exist('tol','var')
+            tol=10^-12;
+        end
+        rhs = rhs(testIntDofs);
+        sTimeSolver = tic;
+        [y,~,solution.relres,solution.iter] = gmres(Mat,rhs(sortOldTest),100,tol,numel(trialIntDofs),Prec);
+        solution.timeSolver = toc(sTimeSolver);
+        solution.u(trialIntDofs) = y(sortOldTrialT);
+        fprintf(1,'\n*Solver info: iter=[%d,%d]; Relres=%g*\n',solution.iter(1),solution.iter(2),solution.relres);
         clear testIntDofs U Ds Q Z Tr A Ks Kt Ms Mt Mr Wt intDofsS iter relres;
 end
 solution.nDof = numel(trialIntDofs);

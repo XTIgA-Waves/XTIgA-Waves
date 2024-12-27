@@ -228,13 +228,13 @@ switch Solver
         end
         solution.u(trialIntDofs) = Mat\rhs(testIntDofs);
     case 'dirEff'
-        [U,Ds,Q,Z,Tr,A] = FTparameters(Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Mtt(1:end-1,2:end));
+        [U,Ds,Q,Z,Tr,A] = fdtParam(Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Mtt(1:end-1,2:end));
         clear Ks Kt Ms Wt intDofsS;
-        solution.u(trialIntDofs) = FTapplication(rhs(testIntDofs),U,Ds,Q,Z,Tr,A);
+        solution.u(trialIntDofs) = fdtApply(rhs(testIntDofs),U,Ds,Q,Z,Tr,A);
         clear U Ds Q Z Tr A;
     case 'precT'
-        [U,Ds,Q,Z,Tr,A] = FTparameters(Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Mtt(1:end-1,2:end));
-        Prec=@(x) FTapplication(x,U,Ds,Q,Z,Tr,A);
+        [U,Ds,Q,Z,Tr,A] = fdtParam(Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Mtt(1:end-1,2:end));
+        Prec=@(x) fdtApply(x,U,Ds,Q,Z,Tr,A);
         if exist('Mr','var')
             Mat = @(x) applyWaveMatrix(x,Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Mtt(1:end-1,2:end),Mr(intDofsS,intDofsS),Wt(1:end-1,2:end));
         else
