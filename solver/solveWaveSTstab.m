@@ -244,7 +244,7 @@ switch Solver
         clear Ks Kt Ms Mt intDofsS;
         solution.u(trialIntDofs) = fdtApply(rhs(testIntDofs),U,Ds,Q,Z,Tr,A);
         clear U Ds Q Z Tr A;
-    case 'precT'
+    case 'precFDT'
         [U,Ds,Q,Z,Tr,A] = fdtParam(Ks(intDofsS,intDofsS),Kt(1:end-1,2:end),Ms(intDofsS,intDofsS),Mt(1:end-1,2:end)-Pt(1:end-1,2:end));
         Prec=@(x) fdtApply(x,U,Ds,Q,Z,Tr,A);
         if exist('Mr','var')
