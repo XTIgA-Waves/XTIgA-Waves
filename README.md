@@ -44,6 +44,13 @@ Sara Fraschini, Gabriele Loli, Andrea Moiola, Giancarlo Sangalli
 [<img class="publication-brand-image" src="https://sdfestaticassets-eu-west-1.sciencedirectassets.com/prod/4b190b964b2415d63e7a2050ee5b17f5f8cbb4eb/image/elsevier-non-solus.png" alt="Elsevier" width="50">](https://www.sciencedirect.com/science/article/pii/S0898122124002773)
 
 
+* *Space–time isogeometric analysis: a review with application to wave propagation*  
+Gabriele Loli, Giancarlo Sangalli
+[<img class="publication-brand-image" src="https://media.springernature.com/w316/springer-static/cover-hires/journal/40324?as=webp" alt="SeMA" width="50">](https://doi.org/10.1007/s40324-025-00391-x)
+
+
+
+
 * *Unconditionally stable space-time isogeometric discretization for the wave equation in Hamiltonian formulation*  
 Matteo Ferrari, Sara Fraschini, Gabriele Loli, Ilaria Perugia  
 [![arXiv](https://img.shields.io/badge/arXiv-2411.00650-b31b1b.svg)](https://arxiv.org/abs/2411.00650)
@@ -55,6 +62,12 @@ Fraschini, S., Loli, G., Moiola, A., & Sangalli, G. (2024).
 An unconditionally stable space-time isogeometric method for the acoustic wave equation.
 Computers & Mathematics with Applications, Volume 169, 2024, Pages 205-222, ISSN 0898-1221.
 https://doi.org/10.1016/j.camwa.2024.06.009.
+```
+```
+Loli, G., Sangalli, G. (2025).
+Space–time isogeometric analysis: a review with application to wave propagation
+SeMA, 2025.
+https://doi.org/10.1007/s40324-025-00391-x
 ```
 ```
 Ferrari, M., Fraschini, S., Loli, G., Perugia, I. (2024).
