@@ -45,10 +45,8 @@ Sara Fraschini, Gabriele Loli, Andrea Moiola, Giancarlo Sangalli
 
 
 * *Space–time isogeometric analysis: a review with application to wave propagation*  
-Gabriele Loli, Giancarlo Sangalli
+Gabriele Loli, Giancarlo Sangalli  
 [<img class="publication-brand-image" src="https://media.springernature.com/w316/springer-static/cover-hires/journal/40324?as=webp" alt="SeMA" width="50">](https://doi.org/10.1007/s40324-025-00391-x)
-
-
 
 
 * *Unconditionally stable space-time isogeometric discretization for the wave equation in Hamiltonian formulation*  
