@@ -1,4 +1,4 @@
-function [U,Ds,Q,Z,Tr,A] = FTparameters(Ks,Kt,Ms,Wt)
+function [U,Ds,Q,Z,Tr,A] = fdtParam(Ks,Kt,Ms,Wt)
 
 %% Space diagonalization
 if~iscell(Ks)
